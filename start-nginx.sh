@@ -18,10 +18,18 @@ server {
 
         server_name reverse-proxy;
 
-        location /events {
+        # special handling for the status url, so can separate out
+        # the access logs for that.
+        location /_elb_status {
+            access_log /var/log/nginx/elb_status_access.log;
+            proxy_pass http://${SERVER_ADDR}:${SERVER_PORT};
+        }
+
+        # All requests passed through.
+        location / {
             access_log /var/log/nginx/access.log;
 
-	    client_max_body_size ${MAX_BODY_SIZE};
+            client_max_body_size ${MAX_BODY_SIZE};
 
             # Assumes we are already behind a reverse proxy (e.g. ELB)
             real_ip_header X-Forwarded-For;
@@ -29,11 +37,6 @@ server {
 
             proxy_pass http://${SERVER_ADDR}:${SERVER_PORT};
 
-        }
-
-	location /_elb_status {
-            access_log /var/log/nginx/elb_status_access.log;
-            proxy_pass http://${SERVER_ADDR}:${SERVER_PORT};
         }
 
 }
