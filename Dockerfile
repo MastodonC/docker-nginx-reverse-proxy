@@ -3,13 +3,11 @@
 #
 
 # Pull base image.
-FROM alpine
+FROM alpine:edge
 MAINTAINER behroozam <b.hasanbg@gmail.com>
 
 WORKDIR /var/www/html
 
-RUN apk --update upgrade && apk update && apk add curl ca-certificates && update-ca-certificates --fresh && apk add openssl
-RUN echo 'http://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories 
 RUN apk --update add \
         nginx \
         bash
@@ -19,6 +17,7 @@ RUN mkdir -p /run/nginx
 WORKDIR /etc/nginx
 
 ADD start-nginx.sh /start-nginx
+ADD ./htpasswd/htpasswd.users /etc/nginx/
 
 # Define default command.
 CMD ["/bin/bash","/start-nginx"]
