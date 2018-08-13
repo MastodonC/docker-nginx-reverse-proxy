@@ -13,6 +13,7 @@ RUN apk --update add \
         bash
 # Install Nginx.
 RUN mkdir -p /run/nginx
+RUN chown nobody:nobody /var/tmp/nginx/
 # Define working directory.
 WORKDIR /etc/nginx
 
